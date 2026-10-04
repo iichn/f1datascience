@@ -1,39 +1,14 @@
+# Кеш и тяжелые выгрузки
 f1_cache/
-raw_telemetry_data/
-telemetry_dump/
 data/
-datasets/
 *.csv
-*.tsv
-*.parquet
-*.json.gz
+!samples/*.csv
 
+# Логи (папку храним, сами логи игнорируем)
+logs/*.log
+
+# Виртуальное окружение и IDE
 .venv/
 venv/
-ENV/
-env/
-env.bak/
-venv.bak/
-
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.pytest_cache/
-
 .idea/
-.vscode/
-*.swp
-*.swo
-
-spark-warehouse/
-metastore_db/
-derby.log
-*.log
-logs/
-
-.DS_Store
-Thumbs.db
-desktop.ini
-
-.ipynb_checkpoints/
+__pycache__/
