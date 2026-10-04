@@ -1,0 +1,17 @@
+# Настройки директорий
+storage:
+  cache_dir: "f1_cache"
+  output_dir: "data/raw_telemetry"
+  samples_dir: "samples"
+
+# Параметры логирования
+logging:
+  log_file: "logs/data_loader.log"
+  level: "INFO"                     # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s [%(levelname)s] [%(name)s]: %(message)s"
+
+# Параметры выборки по умолчанию
+download_defaults:
+  seasons: [2023]                   # Сезоны для выгрузки (для теста 2023, потом [2022, 2023, 2024])
+  sessions: ["R", "Q"]              # 'R' - гонка, 'Q' - квалификация
+  save_sample: true                 # Сохранять ли эталонный срез в папку samples/
