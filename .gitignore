@@ -12,3 +12,4 @@ logs/*.log
 venv/
 .idea/
 __pycache__/
+hadoop/
