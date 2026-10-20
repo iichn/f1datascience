@@ -139,7 +139,9 @@ class F1DataLoader:
         os.makedirs(target_dir, exist_ok=True)
 
         target_path = os.path.join(target_dir, filename)
-        df.to_csv(target_path, index=False)
+        tmp_path = target_path + ".tmp"
+        df.to_csv(tmp_path, index=False)
+        os.replace(tmp_path, target_path)
         size_mb = os.path.getsize(target_path) / (1024 * 1024)
         self.logger.info(f"Файл сохранен: {target_path} ({size_mb:.2f} MB)")
 
@@ -169,7 +171,7 @@ class F1DataLoader:
             target_sample_path = os.path.join(samples_dir, sample_filename)
 
             # Пропуск уже скачанных этапов
-            if os.path.exists(target_path) and os.path.getsize(target_path) > 50 * 1024 * 1024:
+            if os.path.exists(target_path):
                 # Если большой файл есть, а сэмпла к нему еще нет — быстро создаем сэмпл на 10000 строк
                 if not os.path.exists(target_sample_path):
                     pd.read_csv(target_path, nrows=10000).to_csv(target_sample_path, index=False)
