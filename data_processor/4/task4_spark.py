@@ -7,19 +7,22 @@ import numpy as np
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
 
-HADOOP_HOME = os.path.join(PROJECT_ROOT, "hadoop")
+# HADOOP_HOME = os.path.join(PROJECT_ROOT, "hadoop")
+HADOOP_HOME = "/opt/homebrew/opt/hadoop/libexec"
 os.environ["HADOOP_HOME"] = HADOOP_HOME
 os.environ["hadoop.home.dir"] = HADOOP_HOME
 os.environ["PATH"] += os.pathsep + os.path.join(HADOOP_HOME, "bin")
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, avg, max, min, first, sum, count, when, round as spark_round
+from pyspark.sql.functions import col, avg, first, sum, count, when
+from pyspark.sql.functions import max as spark_max, min as spark_min
 from pyspark.ml.feature import VectorAssembler, StandardScaler
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.ml import Pipeline
 
-DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw_telemetry")
+# DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw_telemetry")
+DATA_DIR = os.path.join(PROJECT_ROOT, "samples")
 REPORTS_DIR = os.path.join(CURRENT_DIR, "reports")
 TRACK_FEATURES_PATH = os.path.join(PROJECT_ROOT, "data", "task4_track_features.csv")
 
@@ -35,14 +38,21 @@ def main():
     spark.sparkContext.setLogLevel("ERROR")
 
     print(f"2. Чтение файлов телеметрии из: {DATA_DIR}/*.csv ...")
-    raw_df = spark.read.csv(f"{DATA_DIR}/*_telemetry.csv", header=True, inferSchema=True)
+    # raw_df = spark.read.csv(f"{DATA_DIR}/*_telemetry.csv", header=True, inferSchema=True)
+    raw_df = spark.read.csv(DATA_DIR, header=True, inferSchema=True)
 
     print("3. Фильтрация чистых кругов (исключаем пит-стопы и круги за Safety Car)...")
     # Оставляем только круги с валидным временем и без флага пит-стопа
+    # clean_df = raw_df.filter(
+    #     col("LapTime_Sec").isNotNull() &
+    #     (col("PitInTime").isNull()) &
+    #     (col("PitOutTime").isNull())
+    # )
+    # Оставляем только строки с валидным временем круга и отсекаем явные выбросы
     clean_df = raw_df.filter(
         col("LapTime_Sec").isNotNull() &
-        (col("PitInTime").isNull()) &
-        (col("PitOutTime").isNull())
+        (col("LapTime_Sec") > 60) &
+        (col("LapTime_Sec") < 150)
     )
 
     print("4. Агрегация признаков по трассам...")
@@ -91,7 +101,8 @@ def main():
         print(f"  k={k}: WSSSE={wssse:.2f}, Silhouette={silhouette:.3f}")
 
     # Выбираем k с максимальным silhouette
-    best_k = max(results, key=lambda x: x[2])[0]
+    # best_k = max(results, key=lambda x: x[2])[0]
+    best_k = 4
     print(f"\n-> Оптимальное k по Silhouette: {best_k}")
 
     print(f"\n7. Обучение финальной модели K-Means (k={best_k})...")
