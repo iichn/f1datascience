@@ -28,7 +28,7 @@ py bin/run_loader.py --year 2022 --gp Monaco --session R
 py -m data_processor.task1_iichn.run_tyre_wear
 
 ### запуск дашборда:
-streamlit run data_processor/task1_iichn/dashboard.py
+streamlit run dashboard/1/dashboard.py
 
 #### у меня стоит джава 8. чтобы анализ сработал нормально можно перед запуском прописать:
 $env:JAVA_HOME = (Get-ChildItem "C:\Program Files\Eclipse Adoptium\jdk-17*" | Select-Object -First 1).FullName
