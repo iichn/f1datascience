@@ -9,9 +9,15 @@ st.title("🏎️ Task 3: F1 Anomaly Detection (Spark + Streamlit)")
 st.write("This dashboard visualizes anomalies processed by Apache Spark, distinguishing between normal lock-ups and technical failures.")
 
 # --- PATH SETUP ---
+# Определяем пути относительно текущей папки (dashboard/3)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-anomaly_file = os.path.join(current_dir, 'task3_full_season_anomalies.csv')
-samples_dir = os.path.join(current_dir, '..', '..', 'samples')
+# Выходим на два уровня вверх к корню проекта (f1datascience)
+project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+
+# Файл с аномалиями лежит там, куда его сохранил Spark
+anomaly_file = os.path.join(project_root, 'data_processor', '3', 'task3_full_season_anomalies.csv')
+# Сырые телеметрии лежат в папке samples
+samples_dir = os.path.join(project_root, 'samples')
 
 # The full 2022 driver grid
 ALL_DRIVERS = ["VER", "PER", "LEC", "SAI", "HAM", "RUS", "NOR", "RIC", "ALO", "OCO", "GAS", "TSU", "VET", "STR", "MAG", "MSC", "BOT", "ZHO", "ALB", "LAT"]
