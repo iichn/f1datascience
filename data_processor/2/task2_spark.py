@@ -112,8 +112,12 @@ def compare_teammates(fastest_laps: pd.DataFrame, style_df: pd.DataFrame):
             lap_frames.append(frame)
 
         # Повороты ищем по кругу более быстрого из напарников (эталонный круг)
-        lap_times = team_df.set_index("Driver")["LapTime"]
-        ref = res[lap_times.idxmin()]
+        lap_times = team_df.set_index("Driver")["LapTime"].dropna()
+        if lap_times.empty:
+            continue  # Если валидного времени круга нет у обоих, пропускаем
+
+        fastest_driver = lap_times.idxmin()
+        ref = res[fastest_driver]
         smooth_speed = ref["Speed"].rolling(3, center=True, min_periods=1).mean().values
         apexes, _ = find_peaks(-smooth_speed, prominence=CORNER_PROMINENCE, distance=int(100 / GRID_STEP_M))
 
@@ -308,10 +312,11 @@ def main():
     spark = SparkSession.builder \
         .appName("F1_Task2_Driving_Style") \
         .config("spark.driver.memory", "4g") \
+        .config("spark.sql.ansi.enabled", "false") \
         .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
-    print(f"2. Параллельное чтение телеметрии квалификаций из: {input_glob} ...")
+    print(f"2. Параллельное чтение телеметрии из: {input_glob} ...")
     # Для сравнения стиля берём квалификацию: у каждого пилота есть «чистый» быстрый круг
     raw_df = spark.read.csv(input_glob, header=True, inferSchema=True)
 
