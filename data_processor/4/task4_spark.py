@@ -7,8 +7,8 @@ import numpy as np
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
 
-# HADOOP_HOME = os.path.join(PROJECT_ROOT, "hadoop")
-HADOOP_HOME = "/opt/homebrew/opt/hadoop/libexec"
+HADOOP_HOME = os.path.join(PROJECT_ROOT, "hadoop")
+#HADOOP_HOME = "/opt/homebrew/opt/hadoop/libexec"
 os.environ["HADOOP_HOME"] = HADOOP_HOME
 os.environ["hadoop.home.dir"] = HADOOP_HOME
 os.environ["PATH"] += os.pathsep + os.path.join(HADOOP_HOME, "bin")
@@ -21,8 +21,8 @@ from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.ml import Pipeline
 
-# DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw_telemetry")
-DATA_DIR = os.path.join(PROJECT_ROOT, "samples")
+DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw_telemetry")
+#DATA_DIR = os.path.join(PROJECT_ROOT, "samples")
 REPORTS_DIR = os.path.join(CURRENT_DIR, "reports")
 TRACK_FEATURES_PATH = os.path.join(PROJECT_ROOT, "data", "task4_track_features.csv")
 
