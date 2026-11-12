@@ -43,7 +43,7 @@ class F1DataLoader:
     def _clean_name(self, name: str) -> str:
         return re.sub(r'[^a-zA-Z0-9_]', '', name.replace(' ', '_'))
 
-    def load_session_telemetry(self, year: int, grand_prix: Any, session_type: str = "R") -> pd.DataFrame:
+    def load_session_telemetry(self, year: int, grand_prix: Any, session_type: str = "R", best_laps_only: bool = False) -> pd.DataFrame:
         """
         Загрузка полной телеметрии сессии, обогащенной данными о командах,
         финишных позициях, возрасте шин и погоде.
@@ -53,12 +53,15 @@ class F1DataLoader:
         try:
             session = fastf1.get_session(year, grand_prix, session_type)
             # Включаем weather=True для Задачи 5
-            session.load(telemetry=True, laps=True, weather=True, messages=False)
+            session.load(telemetry=True, laps=True, weather=True, messages=best_laps_only)
         except Exception as e:
             self.logger.error(f"Ошибка выгрузки сессии {year} {grand_prix}: {e}")
             return pd.DataFrame()
 
         laps = session.laps
+        if best_laps_only:
+            laps = laps.pick_accurate().pick_not_deleted().dropna(subset=['LapTime'])
+            laps = laps.loc[laps.groupby('Driver')['LapTime'].idxmin()]
         if laps.empty:
             self.logger.warning(f"Данные по кругам отсутствуют для этапа {grand_prix}")
             return pd.DataFrame()

@@ -13,3 +13,6 @@ venv/
 .idea/
 __pycache__/
 hadoop/
+
+# Публикуемая сводка задачи 2
+!/data_processor/2/reports/task2_pairs_summary.csv
