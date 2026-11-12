@@ -3,12 +3,13 @@
 
 Обычные сэмплы (первые 10000 строк сессии) содержат телеметрию только одного пилота,
 поэтому сравнить напарников по ним нельзя. Здесь для нескольких квалификаций
-сохраняются лучшие круги ВСЕХ пилотов — этого достаточно для запуска
+сохраняются лучшие корректные и не аннулированные круги доступных пилотов — этого достаточно для запуска
 task2_spark.py --samples и дашборда без полной выгрузки.
 """
 import os
 import sys
 import yaml
+import argparse
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
@@ -25,12 +26,15 @@ KEEP_COLS = ["Year", "GrandPrix", "Session", "Team", "Driver", "LapNumber", "Lap
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--rounds', nargs='+', type=int, choices=range(1, 23), default=ROUNDS)
+    args = parser.parse_args()
     with open("config/data_loader.yaml", "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     loader = F1DataLoader(config)
 
-    for round_num in ROUNDS:
-        df = loader.load_session_telemetry(year=YEAR, grand_prix=round_num, session_type="Q")
+    for round_num in args.rounds:
+        df = loader.load_session_telemetry(year=YEAR, grand_prix=round_num, session_type="Q", best_laps_only=True)
         if df.empty:
             loader.logger.warning(f"Нет данных для этапа {round_num}")
             continue

@@ -28,7 +28,7 @@ task2 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(task2)
 
 
-@st.cache_data
+@st.cache_data(ttl=5)
 def load_csv(path):
     return pd.read_csv(path)
 
@@ -49,7 +49,7 @@ corners_df = load_csv(CORNERS_CSV)
 laps_df = load_csv(LAPS_CSV)
 
 # --- ВКЛАДКИ ДАШБОРДА ---
-tab1, tab2, tab3 = st.tabs(["🏁 Сравнение кругов", "📊 Итоги сезона", "🗂️ Метрики стиля"])
+tab1, tab2, tab3 = st.tabs(["🏁 Сравнение кругов", "📊 Итоги выборки", "🗂️ Метрики стиля"])
 
 with tab1:
     st.header("Наложение телеметрии напарников")
@@ -108,7 +108,7 @@ with tab1:
 
 with tab2:
     st.header("Итоги по парам напарников")
-    st.markdown("Все дельты считаются как **Driver1 − Driver2** (пилоты упорядочены по алфавиту).")
+    st.markdown("Дельты скорости и педалей: **Driver1 − Driver2** (по алфавиту). Разрыв квалификации: **(время Driver2 − время Driver1) / время Driver1 × 100%**.")
 
     images = [
         ("Разрыв в квалификации", "task2_quali_gap.png"),
@@ -132,8 +132,8 @@ with tab2:
     if os.path.exists(PAIRS_CSV):
         pairs_df = load_csv(PAIRS_CSV)
         st.dataframe(pairs_df.round(3), width="stretch")
-        st.caption("MinSpeed_p_value — p-значение парного критерия Уилкоксона: "
-                   "< 0.05 означает статистически значимую разницу скорости в поворотах.")
+        st.caption("MinSpeed_p_value — разведочное p-значение Уилкоксона по поворотам. "
+                   "Повороты одного этапа зависимы; это не доказательство устойчивого различия стиля.")
     else:
         st.info("Сводная таблица пока не сформирована.")
 

@@ -227,7 +227,7 @@ def plot_reports(pairs_df: pd.DataFrame, corners_df: pd.DataFrame, laps_df: pd.D
     for ax in axes:
         ax.axvline(0, color="black", linewidth=0.8)
         ax.grid(axis="x", linestyle=":", alpha=0.6)
-    plt.suptitle("Работа педалями: Driver1 − Driver2 (среднее по всем поворотам сезона)", fontsize=12)
+    plt.suptitle("Работа педалями: Driver1 − Driver2 (среднее по всем поворотам выборки)", fontsize=12)
     plt.tight_layout()
     plt.savefig(os.path.join(REPORTS_DIR, "task2_brake_throttle.png"), dpi=300)
 
